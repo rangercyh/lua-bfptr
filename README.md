@@ -1,3 +1,9 @@
 # lua-bfptr
 
 https://zhuanlan.zhihu.com/p/291206708
+
+讲道理其实如果真要用，应该在lua传递给c的部分不做table的内容拷贝，只用table原地做topk搜索，这样才能规避掉lua层这边既有整数又有浮点数，传递到c层统一由lua_Number接收，拷贝了一份lua_Number的数组调用bfptr算法进行搜索。导致输出结果的数据类型是lua_Number类型，常见的实现是浮点数类型跟lua层原始数组不一致。
+
+可选做法是参考lua的table库实现sort的做法，完全使用下标进行搜索，但这样的话bfptr算法好像就不太好写成递归的形式了。
+
+另一种做法是用lua更加底层的数据结构比如TValue数组，这样就可以按照数字类型输出浮点数或者整数，保持lua层的数据类型。
